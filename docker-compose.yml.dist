@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+      context: ./
+      dockerfile: etc/nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    working_dir: /var/www
+    networks:
+      - symfony_app
+    links:
+      - app
+    depends_on:
+      - app
+  app:
+    build:
+      context: ./
+      dockerfile: etc/app/Dockerfile
+    restart: unless-stopped
+    working_dir: /var/www
+    networks:
+      - symfony_app
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+    links:
+      - mysql
+      - redis
+      - rabbitmq
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: short_urls
+      MYSQL_USER: short_url_user
+      MYSQL_PASSWORD: kbX93oiuafsjldjpqwdWDzHDsLV
+      MYSQL_ROOT_PASSWORD: root_kbX93oiuafsjldjpqwdWDzHDsLV
+      MYSQL_ROOT_HOST: "%"
+    networks:
+      - symfony_app
+  redis:
+    image: redis:4-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - symfony_app
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - symfony_app
+#  elasticsearch:
+#    build: ./etc/elasticsearch
+#    restart: unless-stopped
+#    volumes:
+#      - ./etc/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+#      - .data/elasticsearch:/usr/share/elasticsearch/data
+#    ports:
+#      - "9200:9200"
+#    environment:
+#      ES_JAVA_OPTS: "-Xmx1g -Xms1g"
+#      ELASTIC_PASSWORD: v4DDSaxzQoaV4pSvvHHZ
+#      discovery.type: single-node
+#    networks:
+#      - symfony_app
+#  kibana:
+#    build: ./etc/kibana
+#    restart: unless-stopped
+#    volumes:
+#      - ./etc/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+#    ports:
+#      - "5601:5601"
+#    environment:
+#      - ELASTICSEARCH_USERNAME=elastic
+#      - ELASTICSEARCH_PASSWORD=v4DDSaxzQoaV4pSvvHHZ
+#    networks:
+#      - symfony_app
+#    depends_on:
+#      - elasticsearch
+#    links:
+#      - elasticsearch
+networks:
+  symfony_app:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.158.1.0/24
