@@ -15,9 +15,11 @@ RUN install-php-extensions \
     sockets
 
 COPY . /var/www
-RUN install-php-extensions opcache
-
 # Get latest Composer
 COPY --from=composer:2.0.6 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+RUN composer install && composer dump-autoload --no-dev --classmap-authoritative && install-php-extensions opcache
 
 CMD ["php-fpm", "--nodaemonize"]
