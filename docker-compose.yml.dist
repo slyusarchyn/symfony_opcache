@@ -6,6 +6,9 @@ services:
       context: ./
       dockerfile: etc/nginx/Dockerfile
     restart: unless-stopped
+    volumes:
+      - ./:/var/www/
+      - .data/nginx/logs/:/var/log/nginx
     ports:
       - "80:80"
     working_dir: /var/www
@@ -20,6 +23,8 @@ services:
       context: ./
       dockerfile: etc/app/Dockerfile
     restart: unless-stopped
+    volumes:
+      - ./:/var/www/
     working_dir: /var/www
     networks:
       - symfony_app
