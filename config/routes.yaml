@@ -1,3 +1,14 @@
-#index:
-#    path: /
-#    controller: App\Controller\DefaultController::index
+v1_external:
+  resource: 'routes_v1_external.yaml'
+  prefix: /api/v1/external
+  name_prefix: 'v1_ext_'
+
+index:
+  path: /
+  controller: App\UI\Http\Web\Controller\IndexController::__invoke
+  methods: GET|HEAD
+
+log:
+  path: /log
+  controller: App\UI\Http\Web\Controller\LogController::__invoke
+  methods: GET|HEAD

@@ -17,6 +17,9 @@ build: ## Build environment and initialize composer and project dependencies
 composer-install: ## Run composer install
 		docker-compose exec app sh -lc 'composer install'
 
+composer-optimize: ## Run composer dump-autoload
+		docker-compose exec app sh -lc 'composer dump-autoload --no-dev --classmap-authoritative'
+
 db-reset: ## Run migrations
 		docker-compose exec app sh -lc 'php artisan migrate:reset'
 
@@ -33,6 +36,15 @@ db-init: db-reset db-migrate db-seed
 
 env-vars: ##Listing Environment Variables
 		docker-compose exec app sh -lc 'php bin/console debug:container --env-vars'
+
+cache-clear: ##Clear cache
+		docker-compose exec app sh -lc 'php bin/console cache:clear'
+
+assets-install: ##Install assets
+		docker-compose exec app sh -lc 'php bin/console assets:install public'
+
+parameters: ##Accessing Configuration Parameters
+		docker-compose exec app sh -lc 'php bin/console debug:container --parameters'
 
 phpunit: ## execute project unit tests
 		docker-compose exec app sh -lc './vendor/bin/phpunit'

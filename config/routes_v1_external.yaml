@@ -1,0 +1,7 @@
+sign_in:
+  path: /sign-in
+  controller: App\UI\Http\Rest\External\Controller\Auth\SignInController::__invoke
+  methods: POST
+  requirements:
+    email: \w+
+    password: \w+
