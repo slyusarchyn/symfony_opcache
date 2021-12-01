@@ -14,7 +14,7 @@ final class CreateUserCommand extends Command
 {
     private ValidatorInterface $validator;
 
-    public function __construct(string $name = null, ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, string $name = null)
     {
         parent::__construct($name);
         $this->validator = $validator;
@@ -36,9 +36,7 @@ final class CreateUserCommand extends Command
         $email    = (string)$input->getArgument('email');
         $password = (string)$input->getArgument('password');
 
-        $emailConstraint = new Assert\Email();
-
-        $errors = $this->validator->validate($email, $emailConstraint);
+        $errors = $this->validator->validate($email, new Assert\Email());
 
         if ($errors->count()) {
             $errorMessage = $errors[0]->getMessage();
