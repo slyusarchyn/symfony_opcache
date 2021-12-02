@@ -2,22 +2,26 @@
 
 namespace App\UI\Cli\Command\User;
 
+use App\Application\Command\User\SignUp\SignUpCommand;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class CreateUserCommand extends Command
 {
     private ValidatorInterface $validator;
+    private MessageBusInterface $bus;
 
-    public function __construct(ValidatorInterface $validator, string $name = null)
+    public function __construct(ValidatorInterface $validator, MessageBusInterface $bus)
     {
-        parent::__construct($name);
+        parent::__construct();
         $this->validator = $validator;
+        $this->bus       = $bus;
     }
 
     protected function configure(): void
@@ -43,6 +47,10 @@ final class CreateUserCommand extends Command
             $output->writeln("<error>$errorMessage</error>");
 
             return Command::FAILURE;
+        }
+
+        for ($i = 0; $i < 100; $i++) {
+            $this->bus->dispatch(new SignUpCommand($uuid, $email, $password));
         }
 
         $output->writeln('<info>User Created: </info>');

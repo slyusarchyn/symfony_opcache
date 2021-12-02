@@ -1,0 +1,31 @@
+FROM php:8.0-cli-alpine
+
+COPY etc/queue/php.ini "$PHP_INI_DIR/php.ini"
+
+
+# Get PHP extensions installer
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+
+# Install tools extensions
+RUN apk add --no-cache supervisor
+
+# Install PHP extensions
+RUN install-php-extensions \
+    pdo_mysql \
+    gd \
+    zip \
+    pcntl \
+    intl \
+    redis \
+    sockets \
+    opcache \
+    amqp
+
+# Get latest Composer
+COPY --from=composer:2.0.6 /usr/bin/composer /usr/bin/composer
+
+COPY etc/queue/supervisord.conf /etc/supervisord.conf
+COPY etc/queue/supervisord.conf /etc/supervisor/supervisord.conf
+COPY etc/queue/default-worker.conf /etc/supervisor/conf.d/default-worker.conf
+
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
