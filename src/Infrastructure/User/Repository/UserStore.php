@@ -13,7 +13,7 @@ class UserStore implements UserRepositoryInterface
 
     public function store(User $user): void
     {
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+//        $this->entityManager->persist($user);
+//        $this->entityManager->flush();
     }
 }

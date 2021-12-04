@@ -2,11 +2,11 @@
 
 namespace App\Application\Command\User\SignUp;
 
+use App\Application\Command\CommandHandlerInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\User;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-final class SignUpHandler implements MessageHandlerInterface
+final class SignUpHandler implements CommandHandlerInterface
 {
     private UserRepositoryInterface $userRepository;
 
@@ -23,6 +23,6 @@ final class SignUpHandler implements MessageHandlerInterface
             password_hash($command->plainPassword, PASSWORD_BCRYPT)
         );
 
-        $this->userRepository->store($user);
+//        $this->userRepository->store($user);
     }
 }

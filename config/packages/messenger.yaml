@@ -1,5 +1,17 @@
 framework:
   messenger:
+    default_bus: command.bus
+    buses:
+      command.bus:
+        middleware:
+          - validation
+      query.bus:
+        middleware:
+          - validation
+      event.bus:
+        default_middleware: allow_no_handlers
+        middleware:
+          - validation
     # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
     # failure_transport: failed
 
@@ -7,8 +19,9 @@ framework:
       # https://symfony.com/doc/current/messenger.html#transport-configuration
       async: '%env(RABBITMQ_DSN)%'
       # failed: 'doctrine://default?queue_name=failed'
-      # sync: 'sync://'
+      sync: 'sync://'
 
     routing:
       # Route your messages to the transports
       'App\Application\Command\User\SignUp\SignUpCommand': async
+#      'App\Application\Query\User\FindByEmail\FindByEmailQuery': sync

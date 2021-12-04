@@ -12,3 +12,4 @@
 .env
 docker-compose.yml
 makefile
+.data

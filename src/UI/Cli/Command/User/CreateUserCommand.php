@@ -49,9 +49,7 @@ final class CreateUserCommand extends Command
             return Command::FAILURE;
         }
 
-        for ($i = 0; $i < 100; $i++) {
-            $this->bus->dispatch(new SignUpCommand($uuid, $email, $password));
-        }
+        $this->bus->dispatch(new SignUpCommand($uuid, $email, $password));
 
         $output->writeln('<info>User Created: </info>');
         $output->writeln(sprintf('Uuid: %s', $uuid));
